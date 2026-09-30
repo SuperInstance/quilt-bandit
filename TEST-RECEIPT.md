@@ -1,6 +1,19 @@
-# TEST-RECEIPT — quilt-bandit v0.1.0
+# TEST-RECEIPT — quilt-bandit
 
 Receipt three-elements: what was run, what came back, what counts as failure.
+
+## v0.1.1 — signed federation (SG1–SG4)
+
+- **Run**: `node --test test/*.test.mjs` — Node v24.21.0, Linux container. Suite re-run 5× back-to-back: **12/12 pass every time** (8 v0.1.0 tests untouched + 4 new: SG1–SG4). Ed25519 key material is fresh per run (substrate entropy); all signed assertions are relational (verify/reject outcomes, counts, bit-exact equality against an unsigned twin with the same seeds), so re-runs are deterministic — no pinned key bytes.
+- **Came back**:
+  - **SG1**: two signed agents, 100 steps, one ring merge — every diff in the union verifies (intact AND validly signed under its author did), knowledge = own+sender exactly (100+100), receipt chains verify both sides, and the **fold + regret + cumReward are bit-identical to the unsigned twin run** (same seeds) — signing changed nothing at the value level, as designed.
+  - **SG2 (negative control, the forgery outcome of record)**: an imposter with its OWN keypair (not a member) forged an observation diff claiming a member's did as author, with the id recomputed over the forged payload (self-consistent — passes the content-hash/id gate) and signed with the imposter's key (raw node:crypto — signDiff correctly refuses to build this; the honest library's guards do not bind the attacker). On merge into a signed coordinator the forgery was **REJECTED and RECEIPTED: kind `reject-sig`** (reason pinned via receive(): "signature does not verify under the author did's embedded public key"); knowledge after the attack = exactly the sender's honest diffs; the attack run's fold is **bit-identical to the no-attack control run** (zero reject-sigs there); the receipt chain verifies across the rejections. The **documented downgrade asymmetry was confirmed by assertion**: the SAME forged bytes injected the SAME way are ACCEPTED by an unsigned sheet (applied=1) and poison its fold (fake reward folded into arm 3) — unsigned replicas never examine sig; signatures protect the sheets that enforce them.
+  - **SG3**: a write passing the agent's own key but a foreign `author` threw TypeError at the substrate gate, the refusal was receipted `reject-sig`, nothing landed; a keyless write threw likewise. (Both sealed; chain verifies.)
+  - **SG4**: 3 agents × 150 steps × sync 50, fully signed — regrets, cumReward, and policy tables **bit-identical to the unsigned equivalents** (same agent/bandit seeds); every diff in every agent's knowledge set walks + verifies under a federation member's did; receipt chains verify; canonical fold check passes per agent. Knowledge counts signed == unsigned exactly (protocol pattern identical). Receipted protocol note: with the sequential in-round ring, the final write chunk of the ring's tail needs one more sync round to reach every coordinator — at 150 steps the sink holds the full union (450) and the others one chunk short; identical to the unsigned twin, monotone everywhere — a protocol shape, not a signing effect.
+  - Signing cost: negligible at suite scale (12-test suite ≈ 1.5 s wall; SG4's 450 signed diffs + full walk ≈ 0.5 s). No perf regression was measured for the RL loop beyond one Ed25519 sign per observation (write) and one verify per received diff (merge) — the substrate gate's own cost.
+- **Counts as failure**: a forgery accepted by a signed sheet, or accepted-but-unreceipted; a reject-sig breaking the receipt chain; ANY signed-vs-unsigned divergence in fold/regret/cumReward; an unsigned diff verifying; the unsigned-acceptance asymmetry flipping (unsigned sheets must NOT examine sigs — backward compat).
+
+## v0.1.0 — base suite (B1–B6, NC-B1, NC-B2)
 
 - **Run**: `node --test test/*.test.mjs` — Node v24.21.0, Linux container.
 - **Came back**: 8 tests, **8 pass / 0 fail / 0 skipped** (B1–B6 + NC-B1 + NC-B2).
@@ -17,9 +30,9 @@ Receipt three-elements: what was run, what came back, what counts as failure.
   - **VARIANCE COLLAPSE (finding of record)**: mean per-seed per-replica sd of total pseudo-regret — isolated **22.36**, federated **5.92** (**3.78× compression**), dithered 10.08 (partial). Mean regret: isolated 105.73, federated 101.94, dithered 103.29.
 - **Counts as failure**: any HELD→FAILED flip without rerunning; any threshold change post hoc (none — the bars were in the runner before execution); a merged receipt disagreeing with its chunk raws.
 
-## Negative controls
+## Negative controls (v0.1.0)
 
-- NC-B1 injects a value-flipped diff under its stale id into a merge source: the substrate must reject it and seal the rejection (the fold never sees forged rewards).
+- NC-B1 injects a value-flipped diff under its stale id into a merge source: the substrate must reject it and seal the rejection (the fold never sees forged rewards). v0.1.1 adds SG2: the *self-consistent* cross-key forgery (recomputed id, real signature — wrong key), which the id gate alone cannot catch; only the signature layer stops it.
 - NC-B2 re-merges identical knowledge: the fold must neither double-count nor shrink — the append-only unique-cell design makes duplicate-observation folding impossible.
 
 ## Perf note of record

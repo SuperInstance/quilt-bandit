@@ -24,6 +24,14 @@ The 10-seed pre-registered ensemble (3 conditions × 1500 steps, gossip-ring syn
 
 **The finding of record — variance collapse.** Federation's real, consistent effect is *homogenization*: the mean per-seed spread of per-replica outcomes is **22.36 isolated vs 5.92 federated (3.78× compression)**, with dithering in between (10.08, partial decorrelation). Shared knowledge makes replicas share one fate: catastrophic individual lock-ins disappear, and so do lucky individual wins. Mean regret improves mildly (105.73 → 101.94 isolated → federated). "Pooling helps" is the wrong summary; "pooling collapses the outcome distribution onto the swarm's consensus" is the receipted one.
 
+## Signed federation (v0.1.1) — provenance-proof RL
+
+Agents become DID identities. A `SignedQuiltBanditAgent` (src/signed_bandit.mjs — composition over the unchanged unsigned agent) constructs its Replica with the substrate's signed-sheet schema (`{ signed: true }`, vendored v0.3.0) and generates an Ed25519 keypair at construction; its `did` (`did:key:z…`, the public key embedded in the identifier) is the federated identity, and `exportPublic()` is the admission handle. Every observation write passes the private key, so each observation diff is signed over its content-addressed id by the authoring agent's key — and because the did *embeds* the verifying key, any replica can check authorship from the diff alone. On every merge the substrate's receive path verifies each incoming signature and drops + receipts (kind `reject-sig`) anything that fails: a forged or unattributed observation can never enter the fold. No coordinator-side trust decisions exist — the gate IS the substrate.
+
+**Signing must not change semantics — and it doesn't.** The signature is an overlay excluded from id/canonical computation, so authorship lives at the identity level, never the value level: cell names, values, folds, and the pseudo-regret are untouched by who signed what. SG1/SG4 pin the consequence bit-exactly — a fully signed run and an unsigned run with the same seeds produce identical policy tables, regrets, and cumReward. Signed federation buys provenance, not different RL.
+
+**The downgrade asymmetry, stated plainly (SG2).** A cross-key forgery — an imposter claiming a member's did, id recomputed, signed with the imposter's own key — is rejected and receipted `reject-sig` by a signed coordinator, and the attack run is fold-identical to the no-attack control. But the *same bytes injected the same way* are **accepted by an unsigned sheet**, because unsigned replicas never examine `sig` (v0.2.0 behavior kept byte-for-byte); the test asserts this acceptance on purpose and shows the fake reward poisoning the unsigned fold. Signatures protect the sheets that enforce them: a neighbourhood is only as strong as its weakest sheet. **Key custody is out of scope**: no revocation, rotation, or recovery; the private key lives in the agent object and whoever holds it IS the agent (an allowlist — `signed: { authors: [...] }` — is available substrate-side as admission control, not used by default here).
+
 ## Experiment of record
 
 `node experiment/run_experiment.mjs` (chunkable via `SEEDS="…" OUT="…"`) — receipts: `receipts/experiment-v0.1.0-merged.json` (ensemble of record) + per-chunk raws; claims sealed verbatim — HELD or FAILED, no threshold surgery. Suite: `node --test test/*.test.mjs`.
@@ -42,9 +50,14 @@ The 10-seed pre-registered ensemble (3 conditions × 1500 steps, gossip-ring syn
 | B6 | seeded PRNG stream-stable | irreproducible randomness |
 | NC-B1 | tampered observation rejected on merge + rejection receipted | forgery accepted or silent |
 | NC-B2 | re-merging old knowledge never shrinks or double-counts the fold | duplicate/shrinking fold |
+| SG1 | two signed agents sync: all diffs verify, knowledge = union, fold + regret bit-identical to the unsigned twin | signing changed RL semantics, broke a chain, or an unsigned diff verified |
+| SG2 | cross-key forgery rejected + receipted `reject-sig`; attack run fold-identical to no-attack control; SAME injection accepted by an unsigned sheet (documented asymmetry, asserted) | forgery entered a signed fold, rejection unreceipted, or unsigned sheet examined sigs |
+| SG3 | write with own key + foreign author claim throws (TypeError, receipted, nothing lands); write without key throws | a signer could claim another identity or write unsigned |
+| SG4 | 3-agent × 150-step fully signed run: regrets/cumReward/policy tables bit-identical to the unsigned equivalents; every diff in every agent's knowledge verifies under a member did | signing changed the RL or an unattributed diff is load-bearing |
 
-## Honest limitations (v0.1.0)
+## Honest limitations (v0.1.0, plus v0.1.1)
 
+- Signed federation (v0.1.1) verifies *authorship*, not *honesty of measurement*: a member with a valid key can still sign a fabricated reward — the gate is identity, not truth. Key custody/revocation/rotation out of scope (see the signed-federation section).
 - Scale: 4 arms, 6 replicas, 1500 steps, synthetic drift — the claims are about the *substrate semantics and the federation protocol*, not bandit theory at scale.
 - The ε-ladder is one antidote, hand-picked; UCB-style optimism, Thompson sampling, and per-agent optimism bonuses are untested here.
 - Observation cells grow unboundedly (one per pull); compaction/summary cells are future work.
