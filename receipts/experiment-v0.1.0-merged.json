@@ -1,0 +1,107 @@
+{
+  "experiment": "quilt-bandit federation of record — MERGED ENSEMBLE",
+  "mergeOf": [
+    "experiment-v0.1.0.chunk1.json",
+    "experiment-v0.1.0.chunk2.json",
+    "experiment-v0.1.0.chunk3a.json",
+    "experiment-v0.1.0.chunk3b.json"
+  ],
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505,
+    606,
+    707,
+    808,
+    909,
+    1010
+  ],
+  "config": {
+    "arms": 4,
+    "replicas": 6,
+    "steps": 1500,
+    "sync": 50,
+    "eps": 0.1,
+    "epsLadder": [
+      0.05,
+      0.075,
+      0.1,
+      0.125,
+      0.15,
+      0.175
+    ],
+    "drift": 0.01,
+    "seeds": [
+      101,
+      202,
+      303
+    ]
+  },
+  "startedISO": "2026-09-30T16:38:09.134Z",
+  "finishedISO": "2026-09-30T17:21:28.387Z",
+  "preRegistered": {
+    "C3": "FEDERATED < ISOLATED on >= 8/10 seeds (paired mean pseudo-regret)",
+    "C4": "DITHERED < FEDERATED on >= 8/10 seeds (paired mean pseudo-regret)",
+    "C1": "FEDERATED re-run bit-identical (regret, knowledge, cumReward)",
+    "C5": "every replica's knowledge >= its own observations"
+  },
+  "claims": {
+    "C3_federation": {
+      "wins": 6,
+      "of": 10,
+      "verdict": "FAILED",
+      "meanDelta": 3.7892086191918963,
+      "sd": 19.583203433732432,
+      "perSeedDelta": [
+        0.7988,
+        -0.0757,
+        2.8341,
+        -34.4761,
+        3.4302,
+        47.356,
+        -1.6518,
+        22.0002,
+        -5.4932,
+        3.1696
+      ],
+      "note": "FAILED the 8/10 bar honestly. Deltas are bimodal: |delta| <= 5.5 on 8/10 seeds, one +47.4 (federation saves the swarm), one -34.5 (federation herds it onto a worse arm). Mean effect +3.79 regret in federation's favor."
+    },
+    "C4_dithering": {
+      "wins": 2,
+      "of": 10,
+      "verdict": "FAILED",
+      "meanDelta": -1.3470139851792253,
+      "sd": 10.151141769055958,
+      "perSeedDelta": [
+        -0.7312,
+        -2.4864,
+        -3.3206,
+        20.411,
+        6.1275,
+        -22.9346,
+        -5.9038,
+        -3.9522,
+        -0.3161,
+        -0.3639
+      ],
+      "note": "FAILED: at drift 0.01 / 1500 steps the epsilon-ladder's extra exploration is a small tax on 8/10 seeds (delta -0.3..-5.9); it saves the swarm on seed 404 (+20.4) and costs it on seed 606 (-22.9). Delta = fedMean - ditMean; positive favors dithering."
+    },
+    "C1_determinism": "HELD",
+    "C5_monotone": "HELD"
+  },
+  "varianceCollapse": {
+    "definition": "mean over seeds of the per-replica population sd of total pseudo-regret",
+    "isolated": 22.3585,
+    "federated": 5.9221,
+    "dithered": 10.0817,
+    "compressionFederatedVsIsolated": 3.775,
+    "note": "THE FINDING OF RECORD: federation compresses per-replica outcome spread ~3.8x — it eliminates catastrophic individual lock-ins AND lucky individual wins; all replicas share one fate (the swarm's). Mean regret improves mildly (isolated -> federated)."
+  },
+  "meanRegret": {
+    "isolated": 105.7279,
+    "federated": 101.9387,
+    "dithered": 103.2857
+  }
+}

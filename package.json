@@ -1,0 +1,19 @@
+{
+  "name": "quilt-bandit",
+  "version": "0.1.0",
+  "description": "RL in quilts — federated drifting-bandit replicas whose reward observations live as append-only cells in a quilt diff DAG; gossip-ring merges, read-time folds, herding phenomenon receipted.",
+  "type": "module",
+  "main": "src/bandit.mjs",
+  "files": ["src/", "vendor/", "experiment/", "README.md", "TEST-RECEIPT.md"],
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "experiment": "node experiment/run_experiment.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SuperInstance/quilt-bandit.git"
+  },
+  "keywords": ["reinforcement-learning", "federated", "bandit", "crdt", "diff-dag", "quilt", "herding"],
+  "license": "MIT",
+  "engines": { "node": ">=18" }
+}
