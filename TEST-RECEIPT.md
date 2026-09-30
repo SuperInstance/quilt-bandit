@@ -38,3 +38,16 @@ Receipt three-elements: what was run, what came back, what counts as failure.
 ## Perf note of record
 
 The naive per-step `state()` fold over the substrate's topological DAG was measured **quadratic** (27 s per 2000-step isolated episode); the shipped agent folds incrementally (O(new diffs)) and proves equivalence against one canonical `state()` fold at run end, fail-closed. Merge cost is superlinear in knowledge size: the 10-seed ensemble ran ~3.5 min/seed across 4 chunk processes.
+
+---
+
+# TEST-RECEIPT — quilt-bandit v0.2.0 (sparse gossip)
+
+- **Run**: `node --test test/*.test.mjs` — Node v24.21.0. **Came back**: 17 tests, **17 pass / 0 fail** (v0.1.1's 12 + SP1–SP5). Substrate re-vendored to quilt-neighbourhood v0.4.0 (9d6c620, P7); provenance pins updated; full suite stayed green on the new vendor (backward compatibility confirmed).
+- **SP1 catch of record**: the sparse agent originally did NOT register `arm:*` numeric — concurrent rate sets resolved by P3 id-tiebreak, caught by SP1's estimator-consistency check (1 vs 0.8333), fixed before any measurement. The suite policed its own lane.
+- **Estimator receipt**: sparse = agent-equal pooled rate (mean of per-agent rates under P5); dense = observation-equal pooled rate (mean over every pull). They agree within float-association noise (<= 1e-12, SP1) and are bit-exact on identical rates; they are NOT bit-identical in general (last-bit association) — receipted, not hidden.
+- **Probe of record** (10 seeds, `receipts/experiment-v0.2.0.chunk*.json`):
+  - P1 SPARSE <= 1.15 x DENSE regret on >= 7/10 seeds: **FAILED — 5/10** (mean ratio 1.167; per-seed ratios [1.000, 1.000, 1.594, 0.772, 1.067, 1.633, 1.156, 1.267, 1.182, 0.997] — sparse is better on 2 seeds, within-band on 3, pays a real regret tax on the rest).
+  - P2 SPARSE diffs < 50% of DENSE on >= 9/10 seeds: **HELD — 10/10**. DENSE 51,500 diffs vs SPARSE 2,878 mean (per-agent emits ~487, i.e. skip-ratio ~75% of checkpoint writes) — **17.9x communication reduction**.
+  - P3 integrity (chains verify) and P4 determinism (re-run bit-identical): **HELD**.
+- **The trade-off of record**: P7 sparse gossip buys an ~18x communication reduction for ~17% mean regret cost at this scale (drift 0.01, 1500 steps, 6 replicas). Both sides sealed verbatim; no threshold surgery. The operating point (epsilon, sync cadence, rate-vs-observation cells) is now a measured dial, not a design guess.

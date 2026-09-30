@@ -1,0 +1,199 @@
+{
+  "experiment": "quilt-bandit v0.2.0 sparse gossip probe",
+  "config": {
+    "arms": 4,
+    "replicas": 6,
+    "steps": 1500,
+    "sync": 50,
+    "eps": 0.1,
+    "drift": 0.01,
+    "epsilon": 0.02,
+    "seeds": [
+      707,
+      808,
+      909
+    ]
+  },
+  "startedISO": "2026-09-30T18:44:45.433Z",
+  "finishedISO": "2026-09-30T18:48:20.332Z",
+  "chunk": {
+    "seeds": [
+      707,
+      808,
+      909
+    ],
+    "out": ".chunk3"
+  },
+  "claims": {
+    "P1_sparseRegret": {
+      "preRegistered": "SPARSE regret <= 1.15 x DENSE on >= 7/10 seeds",
+      "wins": 0,
+      "of": 3,
+      "verdict": "FAILED",
+      "meanRatio": 1.2016476507760394
+    },
+    "P2_communication": {
+      "preRegistered": "SPARSE diffs < 50% of DENSE on >= 9/10 seeds",
+      "wins": 3,
+      "of": 3,
+      "verdict": "HELD",
+      "meanDense": 51500,
+      "meanSparse": 2949,
+      "meanSparseEmits": 511.3333333333333
+    },
+    "P3_integrity": "HELD",
+    "P4_determinism": "HELD"
+  },
+  "perSeed": [
+    {
+      "seed": 707,
+      "denseMeanRegret": 155.32994069175405,
+      "sparseMeanRegret": 179.50390092884194,
+      "ratio": 1.1556297525733312,
+      "p1win": false,
+      "denseDiffs": 51500,
+      "sparseDiffs": 3067,
+      "sparseEmits": 533,
+      "sparsePerReplica": [
+        256.855773343146,
+        283.52827235307564,
+        103.7814240109035,
+        102.70049208072938,
+        86.1967089384654,
+        243.9607348467317
+      ],
+      "sparseComm": [
+        {
+          "writes": 120,
+          "emits": 79,
+          "skips": 41
+        },
+        {
+          "writes": 120,
+          "emits": 88,
+          "skips": 32
+        },
+        {
+          "writes": 120,
+          "emits": 77,
+          "skips": 43
+        },
+        {
+          "writes": 120,
+          "emits": 98,
+          "skips": 22
+        },
+        {
+          "writes": 120,
+          "emits": 100,
+          "skips": 20
+        },
+        {
+          "writes": 120,
+          "emits": 91,
+          "skips": 29
+        }
+      ]
+    },
+    {
+      "seed": 808,
+      "denseMeanRegret": 58.728830574001016,
+      "sparseMeanRegret": 74.40415781066115,
+      "ratio": 1.2669102565716595,
+      "p1win": false,
+      "denseDiffs": 51500,
+      "sparseDiffs": 2874,
+      "sparseEmits": 498,
+      "sparsePerReplica": [
+        66.13050056272655,
+        54.14223408461525,
+        70.1243258525011,
+        74.09375276923636,
+        128.69186278677972,
+        53.24227080810794
+      ],
+      "sparseComm": [
+        {
+          "writes": 120,
+          "emits": 78,
+          "skips": 42
+        },
+        {
+          "writes": 120,
+          "emits": 73,
+          "skips": 47
+        },
+        {
+          "writes": 120,
+          "emits": 93,
+          "skips": 27
+        },
+        {
+          "writes": 120,
+          "emits": 93,
+          "skips": 27
+        },
+        {
+          "writes": 120,
+          "emits": 82,
+          "skips": 38
+        },
+        {
+          "writes": 120,
+          "emits": 79,
+          "skips": 41
+        }
+      ]
+    },
+    {
+      "seed": 909,
+      "denseMeanRegret": 83.64068616083414,
+      "sparseMeanRegret": 98.89699348642652,
+      "ratio": 1.182402943183127,
+      "p1win": false,
+      "denseDiffs": 51500,
+      "sparseDiffs": 2906,
+      "sparseEmits": 503,
+      "sparsePerReplica": [
+        72.30985943483638,
+        108.6836539660534,
+        101.06901182228255,
+        98.67011542251358,
+        94.77452359787218,
+        117.87479667500106
+      ],
+      "sparseComm": [
+        {
+          "writes": 120,
+          "emits": 105,
+          "skips": 15
+        },
+        {
+          "writes": 120,
+          "emits": 63,
+          "skips": 57
+        },
+        {
+          "writes": 120,
+          "emits": 64,
+          "skips": 56
+        },
+        {
+          "writes": 120,
+          "emits": 72,
+          "skips": 48
+        },
+        {
+          "writes": 120,
+          "emits": 96,
+          "skips": 24
+        },
+        {
+          "writes": 120,
+          "emits": 103,
+          "skips": 17
+        }
+      ]
+    }
+  ]
+}

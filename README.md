@@ -67,3 +67,11 @@ Agents become DID identities. A `SignedQuiltBanditAgent` (src/signed_bandit.mjs 
 ## Receipt
 
 [TEST-RECEIPT.md](TEST-RECEIPT.md) — run-verified numbers behind this version.
+
+## Sparse gossip (v0.2.0)
+
+Rate cells + P7: agents buffer observations locally and write per-arm **rate** cells (`arm:k:rate`) only at sync checkpoints, under the P7 epsilon-diff policy (unchanged rates emit nothing; every skip is receipted). Merged policy = the P5 canonical mean of the agents' rates.
+
+**The measured trade-off of record** (10-seed pre-registered probe): sparse emits **5.6% of dense's diffs (17.9× reduction)** while paying **~17% mean regret cost** (P1 FAILED its 1.15× band at 5/10 seeds, mean ratio 1.167; P2 HELD 10/10; determinism and chain integrity HELD everywhere). The communication/regret operating point is now a measured dial — see TEST-RECEIPT.md.
+
+The estimator receipt: sparse pools agent-equal (mean of rates), dense pools observation-equal (mean of pulls); they agree to ≤1e-12 and are bit-exact on identical rates — the last-bit association difference is receipted, and the experiment never compares them head-to-head as a confound.

@@ -1,0 +1,53 @@
+seed 101: iso 95.8 | dense 95.0 | sparse 95.0 (ratio 1.000) | emitted dense 9000 sparse 465 (5.2%) skips 255
+seed 202: iso 157.7 | dense 157.8 | sparse 157.8 (ratio 1.000) | emitted dense 9000 sparse 509 (5.7%) skips 211
+seed 303: iso 40.0 | dense 37.2 | sparse 59.2 (ratio 1.594) | emitted dense 9000 sparse 470 (5.2%) skips 250
+{
+  "chunk": {
+    "seeds": [
+      101,
+      202,
+      303
+    ],
+    "out": ".chunk1"
+  },
+  "claims": {
+    "S1_regret_comparability": {
+      "preRegistered": "SPARSE mean pseudo-regret <= 1.15 x DENSE on >= 7/10 seeds (paired)",
+      "wins": 2,
+      "ofSeeds": 3,
+      "verdict": "FAILED",
+      "meanRatio": 1.1979358955142245,
+      "perSeedRatio": [
+        1,
+        1,
+        1.5938
+      ]
+    },
+    "S2_communication": {
+      "preRegistered": "SPARSE emits < 50% of DENSE's diff count on >= 9/10 seeds",
+      "wins": 3,
+      "ofSeeds": 3,
+      "verdict": "FAILED",
+      "meanFraction": 0.053481481481481484,
+      "perSeedFraction": [
+        0.051667,
+        0.056556,
+        0.052222
+      ]
+    },
+    "S4_knowledge_convergence": "HELD",
+    "S3_determinism": "HELD"
+  },
+  "spread": {
+    "definition": "mean over seeds of the per-replica population sd of total pseudo-regret",
+    "isolated": 5.1468,
+    "dense": 3.2759,
+    "sparse": 11.5477
+  },
+  "meanRegret": {
+    "isolated": 97.8415,
+    "dense": 96.6558,
+    "sparse": 104.0134
+  }
+}
+receipt written: receipts/experiment-v0.2.0.chunk1.json

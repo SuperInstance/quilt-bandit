@@ -1,10 +1,16 @@
 {
   "name": "quilt-bandit",
-  "version": "0.1.1",
-  "description": "RL in quilts — federated drifting-bandit replicas whose reward observations live as append-only cells in a quilt diff DAG; gossip-ring merges, read-time folds, herding phenomenon receipted; v0.1.1 signed-sheet federation: every observation is Ed25519-signed by its agent's DID and merges verify authorship (provenance-proof RL).",
+  "version": "0.2.0",
+  "description": "RL in quilts \u2014 federated drifting-bandit replicas on the quilt diff-DAG; v0.2.0 adds sparse gossip: P7 rate-cells cut communication 17.9x for ~17% regret cost (both sealed).",
   "type": "module",
   "main": "src/bandit.mjs",
-  "files": ["src/", "vendor/", "experiment/", "README.md", "TEST-RECEIPT.md"],
+  "files": [
+    "src/",
+    "vendor/",
+    "experiment/",
+    "README.md",
+    "TEST-RECEIPT.md"
+  ],
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "experiment": "node experiment/run_experiment.mjs"
@@ -13,7 +19,20 @@
     "type": "git",
     "url": "git+https://github.com/SuperInstance/quilt-bandit.git"
   },
-  "keywords": ["reinforcement-learning", "federated", "bandit", "crdt", "diff-dag", "quilt", "herding", "did", "signed", "provenance"],
+  "keywords": [
+    "reinforcement-learning",
+    "federated",
+    "bandit",
+    "crdt",
+    "diff-dag",
+    "quilt",
+    "herding",
+    "did",
+    "signed",
+    "provenance"
+  ],
   "license": "MIT",
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }

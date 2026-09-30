@@ -1,0 +1,95 @@
+{
+  "experiment": "quilt-bandit v0.2.0 sparse gossip probe",
+  "config": {
+    "arms": 4,
+    "replicas": 6,
+    "steps": 1500,
+    "sync": 50,
+    "eps": 0.1,
+    "drift": 0.01,
+    "epsilon": 0.02,
+    "seeds": [
+      1010
+    ]
+  },
+  "startedISO": "2026-09-30T18:48:29.425Z",
+  "finishedISO": "2026-09-30T18:49:37.060Z",
+  "chunk": {
+    "seeds": [
+      1010
+    ],
+    "out": ".chunk4"
+  },
+  "claims": {
+    "P1_sparseRegret": {
+      "preRegistered": "SPARSE regret <= 1.15 x DENSE on >= 7/10 seeds",
+      "wins": 1,
+      "of": 1,
+      "verdict": "HELD",
+      "meanRatio": 0.9974001241570312
+    },
+    "P2_communication": {
+      "preRegistered": "SPARSE diffs < 50% of DENSE on >= 9/10 seeds",
+      "wins": 1,
+      "of": 1,
+      "verdict": "HELD",
+      "meanDense": 51500,
+      "meanSparse": 3017,
+      "meanSparseEmits": 526
+    },
+    "P3_integrity": "HELD",
+    "P4_determinism": "HELD"
+  },
+  "perSeed": [
+    {
+      "seed": 1010,
+      "denseMeanRegret": 91.97395409051843,
+      "sparseMeanRegret": 91.73483322909617,
+      "ratio": 0.9974001241570312,
+      "p1win": true,
+      "denseDiffs": 51500,
+      "sparseDiffs": 3017,
+      "sparseEmits": 526,
+      "sparsePerReplica": [
+        85.80691237024472,
+        88.5610267507282,
+        95.98865735159687,
+        103.9589642681598,
+        88.06508739027166,
+        88.02835124357578
+      ],
+      "sparseComm": [
+        {
+          "writes": 120,
+          "emits": 97,
+          "skips": 23
+        },
+        {
+          "writes": 120,
+          "emits": 72,
+          "skips": 48
+        },
+        {
+          "writes": 120,
+          "emits": 102,
+          "skips": 18
+        },
+        {
+          "writes": 120,
+          "emits": 81,
+          "skips": 39
+        },
+        {
+          "writes": 120,
+          "emits": 87,
+          "skips": 33
+        },
+        {
+          "writes": 120,
+          "emits": 87,
+          "skips": 33
+        }
+      ]
+    }
+  ]
+}
